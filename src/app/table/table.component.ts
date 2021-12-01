@@ -13,14 +13,13 @@ export class TableComponent implements OnInit {
   employeeDetails !:any;
   showAdd!: boolean;
   showUpdate!: boolean;
-
+  // constructor user to inject the other dependencies
   constructor(private fb: FormBuilder, private api: CrudService) { }
-  
-
+  // call employee details via api to show on view
   ngOnInit(): void {
     this.getAllEmployee()
   }
-
+  // Defining the userform using the formbuilder
   userForm = this.fb.group({
     title: ['', Validators.required],
     firstName: ['', Validators.required],
@@ -30,17 +29,17 @@ export class TableComponent implements OnInit {
     mobile: ['', [Validators.required, Validators.pattern('[0-9]{10}')]],
     
   })
-
+  //click to show the modal view of userform
   clickAddEmployee(){
     this.userForm.reset();
     this.showAdd= true;
     this.showUpdate = false;
   }
-
+  //this function clear the value in input field after closing
   clearClose(){
     this.userForm.reset()
   }
-
+  //patching the value to object
   postEmployeeDetails(){
     this.employeeModelObj.title = this.userForm.value.title;
     this.employeeModelObj.firstName = this.userForm.value.firstName;
@@ -48,9 +47,8 @@ export class TableComponent implements OnInit {
     this.employeeModelObj.email = this.userForm.value.email;
     this.employeeModelObj.gender = this.userForm.value.gender;
     this.employeeModelObj.mobile = this.userForm.value.mobile;
-
+    //post method calling
     this.api.postEmployee(this.employeeModelObj).subscribe(res=>{
-      // console.log(res)
       alert("Employee added successfully")
       let ref = document.getElementById('cancel')
       ref?.click();
@@ -61,13 +59,13 @@ export class TableComponent implements OnInit {
       alert('something went wrong')
     })
   }
-  
+  // Get method gives the employeedetails
   getAllEmployee(){
     this.api.getEmployee().subscribe(res=>{
       this.employeeDetails = res;
     })
   }
-
+  // Delete method delete the particular object
   deleteEmployee(row: any){
     this.api.deleteEmployee(row.id).subscribe(
       res=>{ alert('Employee detail is deleted')}
@@ -77,7 +75,7 @@ export class TableComponent implements OnInit {
     close1?.click()
    
   }
-
+  // this method to show value in edit modal
   onEdit(row: any){
     this.employeeModelObj.id= row.id;
     this.userForm.controls['title'].setValue(row.title)
@@ -89,7 +87,7 @@ export class TableComponent implements OnInit {
     this.showAdd= false;
     this.showUpdate = true;
   }
-
+  // this method update new value after editing done on the editmodalview
   updateEmployee(){
     this.employeeModelObj.title = this.userForm.value.title;
     this.employeeModelObj.firstName = this.userForm.value.firstName;
@@ -106,7 +104,7 @@ export class TableComponent implements OnInit {
       this.getAllEmployee()
     })
   }
-  
+
   onSubmit(){
     // console.log(this.userForm)
   }
