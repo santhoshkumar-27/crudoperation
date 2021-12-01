@@ -11,12 +11,16 @@ export class TableComponent implements OnInit {
 
   employeeModelObj: EmployeeDetails = new EmployeeDetails();
   employeeDetails !:any;
-  constructor(private fb: FormBuilder, private api: CrudService) { }
   showAdd!: boolean;
   showUpdate!: boolean;
+
+  constructor(private fb: FormBuilder, private api: CrudService) { }
+  
+
   ngOnInit(): void {
     this.getAllEmployee()
   }
+
   userForm = this.fb.group({
     title: ['', Validators.required],
     firstName: ['', Validators.required],
@@ -26,14 +30,17 @@ export class TableComponent implements OnInit {
     mobile: ['', [Validators.required, Validators.pattern('[0-9]{10}')]],
     
   })
+
   clickAddEmployee(){
     this.userForm.reset();
     this.showAdd= true;
     this.showUpdate = false;
   }
+
   clearClose(){
     this.userForm.reset()
   }
+
   postEmployeeDetails(){
     this.employeeModelObj.title = this.userForm.value.title;
     this.employeeModelObj.firstName = this.userForm.value.firstName;
@@ -54,11 +61,13 @@ export class TableComponent implements OnInit {
       alert('something went wrong')
     })
   }
+  
   getAllEmployee(){
     this.api.getEmployee().subscribe(res=>{
       this.employeeDetails = res;
     })
   }
+
   deleteEmployee(row: any){
     this.api.deleteEmployee(row.id).subscribe(
       res=>{ alert('Employee detail is deleted')}
@@ -68,6 +77,7 @@ export class TableComponent implements OnInit {
     close1?.click()
    
   }
+
   onEdit(row: any){
     this.employeeModelObj.id= row.id;
     this.userForm.controls['title'].setValue(row.title)
@@ -79,6 +89,7 @@ export class TableComponent implements OnInit {
     this.showAdd= false;
     this.showUpdate = true;
   }
+
   updateEmployee(){
     this.employeeModelObj.title = this.userForm.value.title;
     this.employeeModelObj.firstName = this.userForm.value.firstName;
@@ -95,6 +106,7 @@ export class TableComponent implements OnInit {
       this.getAllEmployee()
     })
   }
+  
   onSubmit(){
     // console.log(this.userForm)
   }
