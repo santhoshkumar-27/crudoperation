@@ -47,12 +47,21 @@
                       name="title"
                       formControlName="title"
                       id="autoSizingSelect"
+                      [ngClass]="{
+                        'is-invalid': submitted && f.title.errors
+                      }"
                     >
                       <option value="Mr">Mr</option>
                       <option value="Mrs">Mrs</option>
                       <option value="Miss">Miss</option>
                       <option value="Ms">Ms</option>
                     </select>
+                    <div
+                      class="text-danger mt-3"
+                      *ngIf="submitted && f.title.errors"
+                    >
+                      <p *ngIf="f.title.errors.required">* Title is required</p>
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-12 mb-3">
@@ -68,7 +77,33 @@
                       id="exampleFormControlInput1"
                       name="firstName"
                       formControlName="firstName"
+                      [ngClass]="{
+                        'is-invalid': submitted && f.firstName.errors
+                      }"
                     />
+                    <div
+                      *ngIf="submitted && f.firstName.errors"
+                      class="invalid-feedback"
+                    >
+                      <div
+                        *ngIf="
+                          f.firstName.errors.required &&
+                          f.firstName.value === null
+                        "
+                      >
+                        *First Name is required
+                      </div>
+                      <div
+                        *ngIf="
+                          f.firstName.status === 'INVALID' &&
+                          f.firstName.dirty &&
+                          f.firstName.touched &&
+                          f.firstName.value !== ''
+                        "
+                      >
+                        *Enter the valid First Name
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-12 mb-3">
@@ -84,7 +119,33 @@
                       aria-label="Last name"
                       name="lastName"
                       formControlName="lastName"
+                      [ngClass]="{
+                        'is-invalid': submitted && f.lastName.errors
+                      }"
                     />
+                    <div
+                      *ngIf="submitted && f.lastName.errors"
+                      class="invalid-feedback"
+                    >
+                      <div
+                        *ngIf="
+                          f.lastName.errors.required &&
+                          f.lastName.value === null
+                        "
+                      >
+                        *Last Name is required
+                      </div>
+                      <div
+                        *ngIf="
+                          f.lastName.status === 'INVALID' &&
+                          f.lastName.dirty &&
+                          f.lastName.touched &&
+                          f.lastName.value !== ''
+                        "
+                      >
+                        *Enter the valid last Name
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <!-- <div class="col-md-12 mb-3">
@@ -137,8 +198,23 @@
                     class="form-control"
                     id="exampleInputEmail1"
                     aria-describedby="emailHelp"
+                    name="email"
                     formControlName="email"
+                    [ngClass]="{
+                      'is-invalid': submitted && f.email.errors
+                    }"
                   />
+                  <div
+                    class="text-danger c mt-1"
+                    *ngIf="submitted && f.email.errors"
+                  >
+                    <div *ngIf="f.email.errors.required">
+                      E-Mail is required
+                    </div>
+                    <div *ngIf="f.email.errors.email">
+                      Enter a Valid E-mail address
+                    </div>
+                  </div>
                 </div>
                 <div class="col-md-12 mb-3">
                   <label class="form-label d-block">Gender</label>
@@ -150,6 +226,7 @@
                       id="inlineRadio1"
                       value="male"
                       formControlName="gender"
+                      [ngClass]="{ 'is-invalid': submitted && f.gender.errors }"
                     />
                     <label class="form-check-label" for="inlineRadio1"
                       >male</label
@@ -163,6 +240,7 @@
                       id="inlineRadio2"
                       value="female"
                       formControlName="gender"
+                      [ngClass]="{ 'is-invalid': submitted && f.gender.errors }"
                     />
                     <label class="form-check-label" for="inlineRadio2"
                       >Female</label
@@ -176,10 +254,19 @@
                       id="inlineRadio3"
                       value="other"
                       formControlName="gender"
+                      [ngClass]="{ 'is-invalid': submitted && f.gender.errors }"
                     />
                     <label class="form-check-label" for="inlineRadio3"
                       >other</label
                     >
+                  </div>
+                  <div
+                    class="text-danger c mt-1"
+                    *ngIf="submitted && f.gender.errors"
+                  >
+                    <div *ngIf="f.gender.errors.required">
+                      Gender is required
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-12 mb-3">
@@ -193,7 +280,30 @@
                     name="mobile"
                     value=""
                     formControlName="mobile"
+                    [ngClass]="{ 'is-invalid': submitted && f.mobile.errors }"
                   />
+                  <div
+                    *ngIf="submitted && f.mobile.errors"
+                    class="invalid-feedback"
+                  >
+                    <div
+                      *ngIf="
+                        f.mobile.errors.required && f.mobile.value === null
+                      "
+                    >
+                      *mobile number is required
+                    </div>
+                    <div
+                      *ngIf="
+                        f.mobile.status === 'INVALID' &&
+                        f.mobile.dirty &&
+                        f.mobile.touched &&
+                        f.mobile.value !== ''
+                      "
+                    >
+                      *Enter the 10-digit valid mobile
+                    </div>
+                  </div>
                 </div>
                 <div class="col-12 d-flex justify-content-end">
                   <div class="modal-footer">
@@ -209,7 +319,6 @@
                     <button
                       type="submit"
                       class="btn btn-primary"
-                      (click)="postEmployeeDetails()"
                       *ngIf="showAdd"
                     >
                       Add
@@ -217,8 +326,8 @@
                     <button
                       type="submit"
                       class="btn btn-primary"
-                      (click)="updateEmployee()"
                       *ngIf="showUpdate"
+                      [disabled]="userForm.invalid"
                     >
                       update
                     </button>
@@ -325,3 +434,6 @@
     </table>
   </div>
 </div>
+
+<!--(click)="postEmployeeDetails()""
+(click)="updateEmployee()" -->

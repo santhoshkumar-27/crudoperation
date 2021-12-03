@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CrudService } from '../crudservice/crud.service';
 import { EmployeeDetails } from './table.model';
 @Component({
@@ -8,7 +8,8 @@ import { EmployeeDetails } from './table.model';
   styleUrls: ['./table.component.css']
 })
 export class TableComponent implements OnInit {
-
+  submitted = false;
+  userForm!:FormGroup;
   employeeModelObj: EmployeeDetails = new EmployeeDetails();
   employeeDetails !:any;
   showAdd!: boolean;
@@ -18,22 +19,31 @@ export class TableComponent implements OnInit {
   // call employee details via api to show on view
   ngOnInit(): void {
     this.getAllEmployee()
+    // console.log(this.userForm)
+    this.userForm = this.fb.group({
+      title: ['', [Validators.required]],
+      firstName: ['', [Validators.required, Validators.pattern('^[A-Za-z]+$')]],
+      lastName: ['', [Validators.required, Validators.pattern('[A-Za-z]+')]],
+      email: ['', [Validators.required, Validators.email]],
+      gender: ['', [Validators.required]],
+      mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+    })
   }
   // Defining the userform using the formbuilder
-  userForm = this.fb.group({
-    title: ['', Validators.required],
-    firstName: ['', Validators.required],
-    lastName: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    gender: ['', [Validators.required]],
-    mobile: ['', [Validators.required, Validators.pattern('[0-9]{10}')]],
-    
-  })
+  // userForm = this.fb.group({
+  //   title: ['', [Validators.required]],
+  //   firstName: ['', [Validators.required, Validators.pattern('^[A-Za-z]+$')]],
+  //   lastName: ['', [Validators.required, Validators.pattern('[A-Za-z]+')]],
+  //   email: ['', [Validators.required, Validators.email]],
+  //   gender: ['', [Validators.required]],
+  //   mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+  // })
   //click to show the modal view of userform
   clickAddEmployee(){
     this.userForm.reset();
     this.showAdd= true;
     this.showUpdate = false;
+    this.submitted = false;
   }
   //this function clear the value in input field after closing
   clearClose(){
@@ -49,6 +59,7 @@ export class TableComponent implements OnInit {
     this.employeeModelObj.mobile = this.userForm.value.mobile;
     //post method calling
     this.api.postEmployee(this.employeeModelObj).subscribe(res=>{
+      console.log('res in post employe', res);
       alert("Employee added successfully")
       let ref = document.getElementById('cancel')
       ref?.click();
@@ -62,13 +73,15 @@ export class TableComponent implements OnInit {
   // Get method gives the employeedetails
   getAllEmployee(){
     this.api.getEmployee().subscribe(res=>{
+      console.log('res in get method patchValue', res);
       this.employeeDetails = res;
     })
   }
   // Delete method delete the particular object
   deleteEmployee(row: any){
     this.api.deleteEmployee(row.id).subscribe(
-      res=>{ alert('Employee detail is deleted')}
+      res=>{ alert('Employee detail is deleted')},
+      err=>{ alert('Delete not done')}
     )
     this.getAllEmployee()
     let close1 = document.getElementById('close')
@@ -77,7 +90,7 @@ export class TableComponent implements OnInit {
   }
   // this method to show value in edit modal
   onEdit(row: any){
-    this.employeeModelObj.id= row.id;
+    this.employeeModelObj.id = row.id;
     this.userForm.controls['title'].setValue(row.title)
     this.userForm.controls['firstName'].setValue(row.firstName)
     this.userForm.controls['lastName'].setValue(row.lastName)
@@ -95,17 +108,28 @@ export class TableComponent implements OnInit {
     this.employeeModelObj.email = this.userForm.value.email;
     this.employeeModelObj.gender = this.userForm.value.gender;
     this.employeeModelObj.mobile = this.userForm.value.mobile;
+    console.log(this.employeeModelObj.id)
     this.api.updateEmployee(this.employeeModelObj,this.employeeModelObj.id)
     .subscribe(res=>{ 
-      alert('Employee details update succeesfully')
+      alert('Employee details update succeesfully') 
       let ref = document.getElementById('cancel')
       ref?.click();
       this.userForm.reset()
       this.getAllEmployee()
     })
   }
-
+  // get fu(){
+  //   return this.userForm
+  // }
+  get f(){
+    return this.userForm.controls
+    
+  }
   onSubmit(){
+    this.submitted = true;
     // console.log(this.userForm)
+    if(this.userForm.status === "VALID"){
+      this.postEmployeeDetails()
+    }
   }
 }
