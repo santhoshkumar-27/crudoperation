@@ -8,8 +8,10 @@ import { EmployeeDetails } from './table.model';
   styleUrls: ['./table.component.css']
 })
 export class TableComponent implements OnInit {
+  rows:number = 0;
+  idNow !: number;
   submitted = false;
-  userForm!:FormGroup;
+  // userForm!:FormGroup;
   employeeModelObj: EmployeeDetails = new EmployeeDetails();
   employeeDetails !:any;
   showAdd!: boolean;
@@ -20,24 +22,24 @@ export class TableComponent implements OnInit {
   ngOnInit(): void {
     this.getAllEmployee()
     // console.log(this.userForm)
-    this.userForm = this.fb.group({
-      title: ['', [Validators.required]],
-      firstName: ['', [Validators.required, Validators.pattern('^[A-Za-z]+$')]],
-      lastName: ['', [Validators.required, Validators.pattern('[A-Za-z]+')]],
-      email: ['', [Validators.required, Validators.email]],
-      gender: ['', [Validators.required]],
-      mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-    })
+    // this.userForm = this.fb.group({
+    //   title: ['', [Validators.required]],
+    //   firstName: ['', [Validators.required, Validators.pattern('^[A-Za-z]+$')]],
+    //   lastName: ['', [Validators.required, Validators.pattern('[A-Za-z]+')]],
+    //   email: ['', [Validators.required, Validators.email]],
+    //   gender: ['', [Validators.required]],
+    //   mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+    // })
   }
   // Defining the userform using the formbuilder
-  // userForm = this.fb.group({
-  //   title: ['', [Validators.required]],
-  //   firstName: ['', [Validators.required, Validators.pattern('^[A-Za-z]+$')]],
-  //   lastName: ['', [Validators.required, Validators.pattern('[A-Za-z]+')]],
-  //   email: ['', [Validators.required, Validators.email]],
-  //   gender: ['', [Validators.required]],
-  //   mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-  // })
+  userForm = this.fb.group({
+    title: ['', [Validators.required]],
+    firstName: ['', [Validators.required, Validators.pattern('^[A-Za-z]+$')]],
+    lastName: ['', [Validators.required, Validators.pattern('[A-Za-z]+')]],
+    email: ['', [Validators.required, Validators.email]],
+    gender: ['', [Validators.required]],
+    mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+  })
   //click to show the modal view of userform
   clickAddEmployee(){
     this.userForm.reset();
@@ -50,7 +52,11 @@ export class TableComponent implements OnInit {
     this.userForm.reset()
   }
   //patching the value to object
+  getId(){
+    return this.idNow = Date.now()
+  }
   postEmployeeDetails(){
+    this.employeeModelObj.id = this.getId()
     this.employeeModelObj.title = this.userForm.value.title;
     this.employeeModelObj.firstName = this.userForm.value.firstName;
     this.employeeModelObj.lastName = this.userForm.value.lastName;
@@ -58,8 +64,9 @@ export class TableComponent implements OnInit {
     this.employeeModelObj.gender = this.userForm.value.gender;
     this.employeeModelObj.mobile = this.userForm.value.mobile;
     //post method calling
-    this.api.postEmployee(this.employeeModelObj).subscribe(res=>{
-      console.log('res in post employe', res);
+    this.api.postEmployee(this.employeeModelObj)
+    .subscribe(res=>{
+      // console.log('res in post employe', res);
       alert("Employee added successfully")
       let ref = document.getElementById('cancel')
       ref?.click();
@@ -73,7 +80,7 @@ export class TableComponent implements OnInit {
   // Get method gives the employeedetails
   getAllEmployee(){
     this.api.getEmployee().subscribe(res=>{
-      console.log('res in get method patchValue', res);
+      // console.log('res in get method patchValue', res);
       this.employeeDetails = res;
     })
   }
@@ -90,6 +97,7 @@ export class TableComponent implements OnInit {
   }
   // this method to show value in edit modal
   onEdit(row: any){
+    // console.log(row.id)
     this.employeeModelObj.id = row.id;
     this.userForm.controls['title'].setValue(row.title)
     this.userForm.controls['firstName'].setValue(row.firstName)
@@ -108,7 +116,7 @@ export class TableComponent implements OnInit {
     this.employeeModelObj.email = this.userForm.value.email;
     this.employeeModelObj.gender = this.userForm.value.gender;
     this.employeeModelObj.mobile = this.userForm.value.mobile;
-    console.log(this.employeeModelObj.id)
+    // console.log(this.employeeModelObj.id)
     this.api.updateEmployee(this.employeeModelObj,this.employeeModelObj.id)
     .subscribe(res=>{ 
       alert('Employee details update succeesfully') 
@@ -125,11 +133,18 @@ export class TableComponent implements OnInit {
     return this.userForm.controls
     
   }
-  onSubmit(){
-    this.submitted = true;
-    // console.log(this.userForm)
+  onPost(){
     if(this.userForm.status === "VALID"){
       this.postEmployeeDetails()
     }
+  }
+  onSubmit(){
+    this.submitted = true;
+  //   // console.log(this.getId())
+  //   console.log("this is submitted",this.userForm)
+  //   if(this.userForm.status === "VALID"){
+  //     // console.log(this.getId())
+  //     // this.postEmployeeDetails()
+  //   }
   }
 }

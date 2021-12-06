@@ -320,6 +320,7 @@
                       type="submit"
                       class="btn btn-primary"
                       *ngIf="showAdd"
+                      (click)="onPost()"
                     >
                       Add
                     </button>
@@ -328,6 +329,7 @@
                       class="btn btn-primary"
                       *ngIf="showUpdate"
                       [disabled]="userForm.invalid"
+                      (click)="updateEmployee()"
                     >
                       update
                     </button>
@@ -355,8 +357,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let row of employeeDetails">
-          <td scope="row">{{ row.id }}</td>
+        <tr *ngFor="let row of employeeDetails; let id = index">
+          <td scope="row">{{ id + 1 }}</td>
           <td class="align-middle">{{ row.title }}</td>
           <td class="align-middle">{{ row.firstName }}</td>
           <td class="align-middle">{{ row.lastName }}</td>
@@ -435,5 +437,5 @@
   </div>
 </div>
 
-<!--(click)="postEmployeeDetails()""
+<!--(click)="postEmployeeDetails()"
 (click)="updateEmployee()" -->
